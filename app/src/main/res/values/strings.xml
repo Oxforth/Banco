@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Banco</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_retirar">Retirar</string>
+    <string name="menu_ingresar">Ingresar</string>
+    <string name="menu_transferir">Transferir</string>
+    <string name="menu_cuenta">Ver Cuenta</string>
+    <string name="menu_historial">Historial</string>
+    <string name="menu_pagar">Pagar recibos</string>
+</resources>

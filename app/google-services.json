@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "176891371924",
+    "firebase_url": "https://banco-d3720.firebaseio.com",
+    "project_id": "banco-d3720",
+    "storage_bucket": "banco-d3720.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:176891371924:android:eef05a6a2c55df6d",
+        "android_client_info": {
+          "package_name": "com.example.banco"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "176891371924-8eiktchslgvntsln0k14srqgpcnho3en.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.banco",
+            "certificate_hash": "134a5d0959093da89d67d90c3b573dd41ef4df66"
+          }
+        },
+        {
+          "client_id": "176891371924-ss7hegp632720knkt2b9cs2gk9h2gu2t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBA7DXF8wqo9ooo5_kfpP22PM5iXjLeCF4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "176891371924-ss7hegp632720knkt2b9cs2gk9h2gu2t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
