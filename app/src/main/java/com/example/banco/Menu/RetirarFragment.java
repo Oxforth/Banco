@@ -52,11 +52,25 @@ public class RetirarFragment extends Fragment {
         super.onStart();
         retirar = (Button) getActivity().findViewById(R.id.btnretirar);
         retiro = (EditText) getActivity().findViewById((R.id.editText1));
+        maxid = 0;
+        Toast.makeText(getActivity(), "RETIRARA", Toast.LENGTH_LONG).show();
+        mRootRef.child("actions").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    maxid = (int) dataSnapshot.getChildrenCount();
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         retirar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ingresar();
+                retirar();
                 retiro.setText("");
             }
         });
@@ -67,35 +81,21 @@ public class RetirarFragment extends Fragment {
         this.acount = acount;
     }
 
-    private void ingresar() {
+    private void retirar() {
+
         final Double monto = Double.parseDouble(retiro.getText().toString());
-        maxid = 0;
+        Action action = new Action(maxid + 1, "RET-" + user.getNombre() +
+                " - " + dtf.format(now), monto, "RETIRO", user.getAcountnumber());
 
-        mRootRef.child("actions").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    maxid = (int) dataSnapshot.getChildrenCount();
-                    Action action = new Action(maxid + 1, "RET-" + user.getNombre() +
-                            " - " + dtf.format(now), monto, "RETIRO", user.getAcountnumber());
+        //SE ACTUALIZA CUENTA
+        acount.setAmount(acount.getAmount() - monto);
 
-                    //SE ACTUALIZA CUENTA
-                    acount.setAmount(acount.getAmount() - monto);
+        //SE INGRESA ACCION A LA DB
+        mRootRef.child("actions").child(String.valueOf(maxid + 1)).setValue(action);
 
-                    //SE INGRESA ACCION A LA DB
-                    mRootRef.child("actions").child(String.valueOf(maxid + 1)).setValue(action);
+        //SE ACTUALIZA CUENTA EN LA DB
+        mRootRef.child("acounts").child(acount.getNumber()).setValue(acount);
 
-                    //SE ACTUALIZA CUENTA EN LA DB
-                    mRootRef.child("acounts").child(acount.getNumber()).setValue(acount);
-
-                    Toast.makeText(getActivity(), "RETIRO EXITOSO", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        Toast.makeText(getActivity(), "RETIRO EXITOSO", Toast.LENGTH_LONG).show();
     }
 }

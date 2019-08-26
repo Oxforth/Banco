@@ -61,6 +61,21 @@ public class TransferirFragment extends Fragment {
         transferir = (Button) getView().findViewById(R.id.btnTransferir);
         destino = (TextView) getView().findViewById(R.id.tvDestino);
         monto = (TextView) getView().findViewById(R.id.tvMonto);
+        maxid = 0;
+
+        mRootRef.child("actions").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    maxid = (int) dataSnapshot.getChildrenCount();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         transferir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -90,43 +105,28 @@ public class TransferirFragment extends Fragment {
                     if (dataSnapshot.child(destine).exists()) {
                         acount2 = dataSnapshot.child(destine).getValue(Acount.class);
 
-                        maxid = 0;
 
-                        mRootRef.child("actions").addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if(dataSnapshot.exists()){
-                                    maxid = (int) dataSnapshot.getChildrenCount();
-                                    action = new Action(maxid + 1, "TRA-" + user.getNombre() + " - " +
-                                            destine + " - " + dtf.format(now), mont, "TRANSFERENCIA",
-                                            user.getAcountnumber(), destine);
+                        action = new Action(maxid + 1, "TRA-" + user.getNombre() + " - " +
+                                destine + " - " + dtf.format(now), mont, "TRANSFERENCIA",
+                                user.getAcountnumber(), destine);
+                        //SE ACTUALIZA CUENTA DEL EMISOR
+                        acount.setAmount(acount.getAmount() - mont);
 
-                                    //SE ACTUALIZA CUENTA DEL EMISOR
-                                    acount.setAmount(acount.getAmount() - mont);
+                        //SE ACTUALIZA CUENTA DEL RECEPTOR
+                        acount2.setAmount(acount2.getAmount() + mont);
 
-                                    //SE ACTUALIZA CUENTA DEL RECEPTOR
-                                    acount2.setAmount(acount2.getAmount() + mont);
+                        //SE INGRESA ACCION A LA DB
+                        mRootRef.child("actions").child(String.valueOf(maxid + 1)).setValue(action);
 
-                                    //SE INGRESA ACCION A LA DB
-                                    mRootRef.child("actions").child(String.valueOf(maxid + 1)).setValue(action);
+                        //SE ACTUALIZA CUENTA 1 EN LA DB
+                        mRootRef.child("acounts").child(acount.getNumber()).setValue(acount);
 
-                                    //SE ACTUALIZA CUENTA 1 EN LA DB
-                                    mRootRef.child("acounts").child(acount.getNumber()).setValue(acount);
+                        //SE ACTUALIZA CUENTA 2 EN LA DB
+                        mRootRef.child("acounts").child(acount2.getNumber()).setValue(acount2);
 
-                                    //SE ACTUALIZA CUENTA 2 EN LA DB
-                                    mRootRef.child("acounts").child(acount2.getNumber()).setValue(acount2);
+                        Toast.makeText(getActivity(), "TRANSFERENCIA EXITOSA DE: " + String.valueOf(mont), Toast.LENGTH_LONG).show();
 
-                                    Toast.makeText(getActivity(), "TRANSFERENCIA EXITOSA DE: " + String.valueOf(mont), Toast.LENGTH_LONG).show();
-
-                                    limpiar();
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
+                        limpiar();
                     } else {
                         Toast.makeText(getActivity(), "EL DESTINATARIO NO EXISTE", Toast.LENGTH_LONG).show();
                         limpiar();

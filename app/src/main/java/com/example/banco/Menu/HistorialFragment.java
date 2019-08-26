@@ -94,7 +94,6 @@ public class HistorialFragment extends Fragment {
                     listMyAction.add(action);
                 }
                 listAction.addAll(listMyAction);
-                Collections.sort(listAction, Collections.reverseOrder());
                 adapterAction = new ArrayAdapter<Action>(getActivity(), android.R.layout
                         .simple_list_item_1, listAction);
                 historial.setAdapter(adapterAction);
@@ -112,7 +111,6 @@ public class HistorialFragment extends Fragment {
                     OtherMyAction.add(action);
                 }
                 listAction.addAll(OtherMyAction);
-                Collections.sort(listAction, Collections.reverseOrder());
                 adapterAction = new ArrayAdapter<Action>(getActivity(), android.R.layout
                         .simple_list_item_1, listAction);
                 historial.setAdapter(adapterAction);

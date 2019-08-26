@@ -53,6 +53,22 @@ public class IngresarFragment extends Fragment {
         super.onStart();
         ingresar = (Button) getActivity().findViewById(R.id.btningresar);
         ingreso = (EditText) getActivity().findViewById((R.id.editText));
+        maxid = 0;
+
+        mRootRef.child("actions").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    maxid = (int) dataSnapshot.getChildrenCount();
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         ingresar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,33 +87,18 @@ public class IngresarFragment extends Fragment {
     private void ingresar() {
         final Double monto = Double.parseDouble(ingreso.getText().toString());
 
-        maxid = 0;
+        Action action = new Action(maxid + 1, "ING-" + user.getNombre() +
+                " - " + dtf.format(now), monto, "INGRESO", user.getAcountnumber());
 
-        mRootRef.child("actions").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    maxid = (int) dataSnapshot.getChildrenCount();
-                    Action action = new Action(maxid + 1, "ING-" + user.getNombre() +
-                            " - " + dtf.format(now), monto, "INGRESO", user.getAcountnumber());
+        //SE ACTUALIZA CUENTA
+        acount.setAmount(acount.getAmount() + monto);
 
-                    //SE ACTUALIZA CUENTA
-                    acount.setAmount(acount.getAmount() + monto);
+        //SE INGRESA ACCION A LA DB
+        mRootRef.child("actions").child(String.valueOf(maxid + 1)).setValue(action);
 
-                    //SE INGRESA ACCION A LA DB
-                    mRootRef.child("actions").child(String.valueOf(maxid + 1)).setValue(action);
+        //SE ACTUALIZA CUENTA EN LA DB
+        mRootRef.child("acounts").child(acount.getNumber()).setValue(acount);
 
-                    //SE ACTUALIZA CUENTA EN LA DB
-                    mRootRef.child("acounts").child(acount.getNumber()).setValue(acount);
-
-                    Toast.makeText(getActivity(), "INGRESO EXITOSO", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        Toast.makeText(getActivity(), "INGRESO EXITOSO", Toast.LENGTH_LONG).show();
     }
 }

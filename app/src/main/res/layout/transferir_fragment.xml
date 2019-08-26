@@ -19,8 +19,9 @@
         android:layout_above="@+id/tvMonto"
         android:layout_marginBottom="36dp"
         android:ems="10"
+        android:maxLength="12"
         android:gravity="center"
-        android:inputType="textPersonName"
+        android:inputType="number"
         android:textSize="20dp"
         android:hint="DESTINATARIO" />
 

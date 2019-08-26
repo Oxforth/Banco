@@ -78,6 +78,6 @@ public class Action {
 
     @Override
     public String toString() {
-        return number + " - Tipo: " + type + " - Monto: " + amount;
+        return id + " - " +number + " - Tipo: " + type + " - Monto: " + amount;
     }
 }

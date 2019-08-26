@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.banco.Model.Acount;
@@ -22,15 +23,19 @@ import java.util.UUID;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private Button add;
+    private Button ingresar;
+    private EditText number;
+    private EditText pass;
     DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        add = (Button)findViewById(R.id.btnAdd);
-        add.setOnClickListener(this);
+        ingresar = (Button) findViewById(R.id.btnLog);
+        number = (EditText) findViewById(R.id.edtNumber);
+        pass = (EditText) findViewById(R.id.edtpass);
+        ingresar.setOnClickListener(this);
     }
 
     @Override
@@ -41,7 +46,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.btnAdd:
+            case R.id.btnLog:
                 login();
                 //insert();
                 break;
@@ -69,15 +74,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }*/
 
     private void login() {
-        final String numero = "420040004321";
-        final String pass = "1234";
+
+        final String numero = number.getText().toString();
+        final String passw = pass.getText().toString();
         mRootRef.child("acounts").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.child(numero).exists()){
                     if (!numero.isEmpty()){
                         Acount acount = dataSnapshot.child(numero).getValue(Acount.class);
-                        if (acount.getPass().equals(pass)){
+                        if (acount.getPass().equals(passw)){
                             Toast.makeText(getApplicationContext(),"SESION INICIADA!",Toast.LENGTH_LONG).show();
                             enterMain(acount);
                         }else{

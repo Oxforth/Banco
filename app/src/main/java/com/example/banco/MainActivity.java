@@ -32,13 +32,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
-    private User user = new User();
+    private User user;
     private Acount acount = new Acount();
+
+    private TextView user1;
 
     private MainFragment mainFragment = new MainFragment();
     private RetirarFragment retirarFragment = new RetirarFragment();
@@ -53,6 +56,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        user1 = (TextView) findViewById(R.id.user_name);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -66,7 +71,18 @@ public class MainActivity extends AppCompatActivity
 
         navigationView.setNavigationItemSelectedListener(this);
 
+        inicializar();
+
+
+        if(savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MainFragment()).commit();
+            navigationView.setCheckedItem(R.id.nav_home);
+        }
+    }
+
+    private void inicializar() {
         Intent intent = getIntent();
+
         //SE INICIALIZA EL USUARIO
         mRootRef.child("users").orderByChild("acountnumber").equalTo(intent.getStringExtra("USER")).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -80,6 +96,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+
         //SE INICIALIZA LA CUENTA
         mRootRef.child("acounts").orderByChild("number").equalTo(intent.getStringExtra("USER")).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -92,11 +109,6 @@ public class MainActivity extends AppCompatActivity
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
-
-        if(savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MainFragment()).commit();
-            navigationView.setCheckedItem(R.id.nav_home);
-        }
     }
 
     @Override

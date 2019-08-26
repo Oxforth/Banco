@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,8 @@ public class CuentaFragment extends Fragment {
     private User user;
     public Acount acount;
 
+    private TextView cuenta, nombres, dni, monto;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -35,27 +38,22 @@ public class CuentaFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        cuenta = (TextView) getActivity().findViewById(R.id.tvCuenta);
+        nombres = (TextView) getActivity().findViewById(R.id.tvNomres);
+        dni = (TextView) getActivity().findViewById(R.id.tvDni);
+        monto = (TextView) getActivity().findViewById(R.id.tvMonto);
         verCuenta();
     }
 
-    public void User(User user,Acount acount){
+    public void User(User user, Acount acount) {
         this.user = user;
         this.acount = acount;
     }
 
     private void verCuenta() {
-        mRootRef.child("acounts").orderByChild("number").equalTo(user.getAcountnumber()).
-                addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot child: dataSnapshot.getChildren()){
-                            acount = child.getValue(Acount.class);
-                        }
-                        Toast.makeText(getActivity(),"" + acount.toString(), Toast.LENGTH_LONG).show();
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                    }
-                });
+        cuenta.setText("Cuenta: " + acount.getNumber());
+        nombres.setText("Nombres: " + user.getNombre() + " " + user.getAppaterno() + " " + user.getApmaterno());
+        dni.setText("Dni: " + user.getDni());
+        monto.setText("Monto: " + String.valueOf(acount.getAmount()));
     }
 }

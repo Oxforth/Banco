@@ -68,7 +68,7 @@ public class DeudasFragment extends Fragment {
         return inflater.inflate(R.layout.deuda_fragment, container, false);
     }
 
-    public void User(User user, Acount acount){
+    public void User(User user, Acount acount) {
         this.user = user;
         this.acount = acount;
     }
@@ -116,7 +116,7 @@ public class DeudasFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 listDebt.clear();
-                for (DataSnapshot child: dataSnapshot.getChildren()) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
                     Debt debt = child.getValue(Debt.class);
                     listDebt.add(debt);
                     adapterPersona = new ArrayAdapter<Debt>(getActivity(),
@@ -142,7 +142,7 @@ public class DeudasFragment extends Fragment {
         mRootRef.child("actions").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
+                if (dataSnapshot.exists()) {
                     maxid = (int) dataSnapshot.getChildrenCount();
                     action = new Action(maxid + 1, "PAG-" + user.getNombre() + " " +
                             debt.getName() + dtf.format(now), mont, "PAGO", user.getAcountnumber(), debt.getTransmitter());
