@@ -7,17 +7,19 @@ public class Debt {
     private String transmitter;
     private String receiver;
     private String estate;
+    private String value;
 
     public Debt() {
     }
 
-    public Debt(String id, String name, double amount, String transmitter, String receiver, String estate) {
+    public Debt(String id, String name, double amount, String transmitter, String receiver, String estate, String value) {
         this.id = id;
         this.name = name;
         this.amount = amount;
         this.transmitter = transmitter;
         this.receiver = receiver;
         this.estate = estate;
+        this.value = value;
     }
 
     public String getId() {
@@ -66,5 +68,18 @@ public class Debt {
 
     public void setEstate(String estate) {
         this.estate = estate;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return name + " - deuda: " + amount;
     }
 }

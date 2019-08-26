@@ -3,10 +3,50 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="297dp"
-        android:layout_height="56dp"
-        android:layout_centerInParent="true"
-        android:text="TRANSFERIR"
-        android:textSize="50dp" />
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tvDestino"
+        android:layout_marginBottom="47dp"
+        android:gravity="center"
+        android:text="TRANSFERENCIA"
+        android:textSize="45dp" />
+
+    <EditText
+        android:id="@+id/tvDestino"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tvMonto"
+        android:layout_marginBottom="36dp"
+        android:ems="10"
+        android:gravity="center"
+        android:inputType="textPersonName"
+        android:textSize="20dp"
+        android:hint="DESTINATARIO" />
+
+    <EditText
+        android:id="@+id/tvMonto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btnTransferir"
+        android:layout_marginBottom="45dp"
+        android:ems="10"
+        android:gravity="center"
+        android:inputType="number"
+        android:textSize="20dp"
+        android:hint="MONTO" />
+
+    <Button
+        android:id="@+id/btnTransferir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/textView2"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="76dp"
+        android:layout_marginEnd="81dp"
+        android:layout_marginBottom="222dp"
+        android:text="Transferir"
+        android:textSize="25dp" />
+
 </RelativeLayout>

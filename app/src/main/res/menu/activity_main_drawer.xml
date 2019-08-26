@@ -21,9 +21,9 @@
             android:icon="@drawable/ic_menu_manage"
             android:title="@string/menu_transferir" />
         <item
-            android:id="@+id/nav_pagar"
+            android:id="@+id/nav_deudas"
             android:icon="@drawable/ic_menu_manage"
-            android:title="@string/menu_pagar" />
+            android:title="@string/menu_deuda" />
     </group>
 
     <item android:title="Check">

@@ -5,10 +5,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.banco.Model.Acount;
@@ -21,14 +24,30 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 public class TransferirFragment extends Fragment {
 
+    //FIREBASE
     DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
+
+    //MODELS
     public User user;
-    Acount acount, acount2;
+    Acount acount;
+    Acount acount2;
     public Action action;
+
+    //COMPONENTS
+    private Button transferir;
+    private TextView destino;
+    private TextView monto;
+    private int maxid;
+
+    //DATE IMPORT
+    private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+    private LocalDateTime now = LocalDateTime.now();
 
     @Nullable
     @Override
@@ -39,58 +58,91 @@ public class TransferirFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        transferir();
+        transferir = (Button) getView().findViewById(R.id.btnTransferir);
+        destino = (TextView) getView().findViewById(R.id.tvDestino);
+        monto = (TextView) getView().findViewById(R.id.tvMonto);
+        transferir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                transferir();
+            }
+        });
     }
 
-    public void User(User user){
+    public void User(User user, Acount acounts) {
         this.user = user;
+        this.acount = acounts;
     }
 
     private void transferir() {
 
-        //SE BUSCA LA CUENTA A ACTUALIZAR
-        mRootRef.child("acounts").orderByChild("number").equalTo(user.getAcountnumber()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot child: dataSnapshot.getChildren()){
-                    acount = child.getValue(Acount.class);
+        //SE PREPARA VARIABLES
+        final String destine = destino.getText().toString();
+        final Double mont = Double.parseDouble(monto.getText().toString());
+
+        if (destine == acount.getNumber()) {
+            Toast.makeText(getActivity(), "NO PUEDE HACERSE UNA TRANSFERENCIA A SI MISMO", Toast.LENGTH_LONG).show();
+        } else {
+
+            mRootRef.child("acounts").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.child(destine).exists()) {
+                        acount2 = dataSnapshot.child(destine).getValue(Acount.class);
+
+                        maxid = 0;
+
+                        mRootRef.child("actions").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.exists()){
+                                    maxid = (int) dataSnapshot.getChildrenCount();
+                                    action = new Action(maxid + 1, "TRA-" + user.getNombre() + " - " +
+                                            destine + " - " + dtf.format(now), mont, "TRANSFERENCIA",
+                                            user.getAcountnumber(), destine);
+
+                                    //SE ACTUALIZA CUENTA DEL EMISOR
+                                    acount.setAmount(acount.getAmount() - mont);
+
+                                    //SE ACTUALIZA CUENTA DEL RECEPTOR
+                                    acount2.setAmount(acount2.getAmount() + mont);
+
+                                    //SE INGRESA ACCION A LA DB
+                                    mRootRef.child("actions").child(String.valueOf(maxid + 1)).setValue(action);
+
+                                    //SE ACTUALIZA CUENTA 1 EN LA DB
+                                    mRootRef.child("acounts").child(acount.getNumber()).setValue(acount);
+
+                                    //SE ACTUALIZA CUENTA 2 EN LA DB
+                                    mRootRef.child("acounts").child(acount2.getNumber()).setValue(acount2);
+
+                                    Toast.makeText(getActivity(), "TRANSFERENCIA EXITOSA DE: " + String.valueOf(mont), Toast.LENGTH_LONG).show();
+
+                                    limpiar();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    } else {
+                        Toast.makeText(getActivity(), "EL DESTINATARIO NO EXISTE", Toast.LENGTH_LONG).show();
+                        limpiar();
+                    }
                 }
 
-                action = new Action(UUID.randomUUID().toString(),"TRA-"+user.getNombre(),
-                        100,"TRANSFERENCIA",user.getAcountnumber(),"808080008321");
-                //SE ACTUALIZA CUENTA DEL EMISOR
-                acount.setAmount(acount.getAmount() - action.getAmount());
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                mRootRef.child("acounts").orderByChild("number").equalTo("808080008321").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot child: dataSnapshot.getChildren()){
-                            acount2 = child.getValue(Acount.class);
-                        }
+                }
+            });
+        }
+    }
 
-                        //SE ACTUALIZA CUENTA DEL RECEPTOR
-                        acount2.setAmount(acount2.getAmount()+action.getAmount());
-
-                        //SE INGRESA ACCION A LA DB
-                        mRootRef.child("actions").child(action.getId()).setValue(action);
-
-                        //SE ACTUALIZA CUENTA 1 EN LA DB
-                        mRootRef.child("acounts").child(acount.getNumber()).setValue(acount);
-
-                        //SE ACTUALIZA CUENTA 2 EN LA DB
-                        mRootRef.child("acounts").child(acount2.getNumber()).setValue(acount2);
-
-                        Toast.makeText(getActivity(),"INGRESO EXITOSO",Toast.LENGTH_LONG);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                    }
-                });
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
+    private void limpiar() {
+        monto.setText("");
+        destino.setText("");
     }
 }

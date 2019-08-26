@@ -14,4 +14,5 @@
     <string name="menu_cuenta">Ver Cuenta</string>
     <string name="menu_historial">Historial</string>
     <string name="menu_pagar">Pagar recibos</string>
+    <string name="menu_deuda">Deudas</string>
 </resources>

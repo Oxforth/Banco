@@ -10,15 +10,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.banco.Model.Acount;
+import com.example.banco.Model.Action;
 import com.example.banco.Model.User;
 import com.example.banco.R;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class MainFragment extends Fragment {
 
-    DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
     private User user;
+    private Acount acount;
 
     @Nullable
     @Override
@@ -26,7 +26,8 @@ public class MainFragment extends Fragment {
         return inflater.inflate(R.layout.main_fragment, container, false);
     }
 
-    public void User(User user){
+    public void User(User user, Acount acount){
         this.user = user;
+        this.acount = acount;
     }
 }

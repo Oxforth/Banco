@@ -2,11 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="56dp"
-        android:layout_centerInParent="true"
-        android:text="HISTORIAL"
-        android:textSize="50dp" />
+    <ListView
+        android:id="@+id/lvhistorial"
+        android:layout_width="match_parent"
+        android:layout_height="662dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="69dp"></ListView>
 </RelativeLayout>

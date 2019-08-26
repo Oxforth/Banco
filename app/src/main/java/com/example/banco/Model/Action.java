@@ -1,9 +1,9 @@
 package com.example.banco.Model;
 
 public class Action {
-    private String id;
+    private int id;
     private String number;
-    private double amount;
+    private Double amount;
     private String type;
     private String transmitter;
     private String receiver;
@@ -11,7 +11,7 @@ public class Action {
     public Action() {
     }
 
-    public Action(String id, String number, double amount, String type, String transmitter, String receiver) {
+    public Action(int id,   String number, Double amount, String type, String transmitter, String receiver) {
         this.id = id;
         this.number = number;
         this.amount = amount;
@@ -20,7 +20,7 @@ public class Action {
         this.receiver = receiver;
     }
 
-    public Action(String id, String number, double amount, String type, String transmitter) {
+    public Action(int id, String number, Double amount, String type, String transmitter) {
         this.id = id;
         this.number = number;
         this.amount = amount;
@@ -28,11 +28,11 @@ public class Action {
         this.transmitter = transmitter;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -44,11 +44,11 @@ public class Action {
         this.number = number;
     }
 
-    public double getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 
@@ -74,5 +74,10 @@ public class Action {
 
     public void setReceiver(String receiver) {
         this.receiver = receiver;
+    }
+
+    @Override
+    public String toString() {
+        return number + " - Tipo: " + type + " - Monto: " + amount;
     }
 }

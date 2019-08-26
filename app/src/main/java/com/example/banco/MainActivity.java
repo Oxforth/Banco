@@ -4,17 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.banco.Menu.CuentaFragment;
+import com.example.banco.Menu.DeudasFragment;
 import com.example.banco.Menu.HistorialFragment;
 import com.example.banco.Menu.IngresarFragment;
 import com.example.banco.Menu.MainFragment;
-import com.example.banco.Menu.PagarFragment;
 import com.example.banco.Menu.RetirarFragment;
 import com.example.banco.Menu.TransferirFragment;
+import com.example.banco.Model.Acount;
 import com.example.banco.Model.User;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.GravityCompat;
@@ -41,14 +38,15 @@ public class MainActivity extends AppCompatActivity
 
     DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
     private User user = new User();
+    private Acount acount = new Acount();
 
     private MainFragment mainFragment = new MainFragment();
     private RetirarFragment retirarFragment = new RetirarFragment();
     private IngresarFragment ingresarFragment = new IngresarFragment();
     private TransferirFragment transferirFragment = new TransferirFragment();
-    private PagarFragment pagarFragment = new PagarFragment();
     private CuentaFragment cuentaFragment = new CuentaFragment();
     private HistorialFragment historialFragment = new HistorialFragment();
+    private DeudasFragment deudasFragment = new DeudasFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +67,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         Intent intent = getIntent();
+        //SE INICIALIZA EL USUARIO
         mRootRef.child("users").orderByChild("acountnumber").equalTo(intent.getStringExtra("USER")).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -80,6 +79,20 @@ public class MainActivity extends AppCompatActivity
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
+
+        //SE INICIALIZA LA CUENTA
+        mRootRef.child("acounts").orderByChild("number").equalTo(intent.getStringExtra("USER")).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot child: dataSnapshot.getChildren()){
+                    acount = child.getValue(Acount.class);
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
         if(savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MainFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_home);
@@ -126,8 +139,8 @@ public class MainActivity extends AppCompatActivity
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ingresarFragment).commit();
         } else if (id == R.id.nav_tranferir) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, transferirFragment).commit();
-        } else if (id == R.id.nav_pagar) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, pagarFragment).commit();
+        } else if (id == R.id.nav_deudas) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, deudasFragment).commit();
         } else if (id == R.id.nav_cuenta) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, cuentaFragment).commit();
         } else if (id == R.id.nav_historial) {
@@ -140,12 +153,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setUser(){
-        mainFragment.User(user);
-        retirarFragment.User(user);
-        ingresarFragment.User(user);
-        transferirFragment.User(user);
-        pagarFragment.User(user);
-        cuentaFragment.User(user);
-        historialFragment.User(user);
+        mainFragment.User(user,acount);
+        retirarFragment.User(user,acount);
+        ingresarFragment.User(user,acount);
+        transferirFragment.User(user,acount);
+        deudasFragment.User(user,acount);
+        cuentaFragment.User(user,acount);
+        historialFragment.User(user,acount);
     }
 }
