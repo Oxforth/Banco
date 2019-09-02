@@ -70,8 +70,12 @@ public class RetirarFragment extends Fragment {
         retirar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                retirar();
-                retiro.setText("");
+                if (retiro.getText().toString().isEmpty()){
+                    Toast.makeText(getActivity(),"INGRESE MONTO",Toast.LENGTH_LONG).show();
+                } else {
+                    retirar();
+                    retiro.setText("");
+                }
             }
         });
     }

@@ -73,8 +73,12 @@ public class IngresarFragment extends Fragment {
         ingresar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ingresar();
-                ingreso.setText("");
+                if (ingreso.getText().toString().isEmpty()){
+                    Toast.makeText(getActivity(),"INGRESE MONTO",Toast.LENGTH_LONG).show();
+                } else {
+                    ingresar();
+                    ingreso.setText("");
+                }
             }
         });
     }

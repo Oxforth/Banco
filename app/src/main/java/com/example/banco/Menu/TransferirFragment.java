@@ -79,7 +79,11 @@ public class TransferirFragment extends Fragment {
         transferir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                transferir();
+                if(destino.getText().toString().isEmpty()||monto.getText().toString().isEmpty()){
+                    Toast.makeText(getActivity(),"FALTA MONTO O DESIINATARIO",Toast.LENGTH_LONG).show();
+                } else {
+                    transferir();
+                }
             }
         });
     }

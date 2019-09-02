@@ -52,7 +52,7 @@ public class HistorialFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-            historial = (ListView) getActivity().findViewById(R.id.lvhistorial);
+        historial = (ListView) getActivity().findViewById(R.id.lvhistorial);
         verHistorial();
         historial.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -98,26 +98,28 @@ public class HistorialFragment extends Fragment {
                         .simple_list_item_1, listAction);
                 historial.setAdapter(adapterAction);
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
         mRootRef.child("actions").orderByChild("receiver").equalTo(acount.getNumber())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    Action action = child.getValue(Action.class);
-                    OtherMyAction.add(action);
-                }
-                listAction.addAll(OtherMyAction);
-                adapterAction = new ArrayAdapter<Action>(getActivity(), android.R.layout
-                        .simple_list_item_1, listAction);
-                historial.setAdapter(adapterAction);
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot child : dataSnapshot.getChildren()) {
+                            Action action = child.getValue(Action.class);
+                            OtherMyAction.add(action);
+                        }
+                        listAction.addAll(OtherMyAction);
+                        adapterAction = new ArrayAdapter<Action>(getActivity(), android.R.layout
+                                .simple_list_item_1, listAction);
+                        historial.setAdapter(adapterAction);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
     }
 }

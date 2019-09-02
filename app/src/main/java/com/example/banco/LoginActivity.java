@@ -53,13 +53,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    /*private void insert() {
+    private void insert() {
+        /*
         User user = new User("95568c00-a03f-4309-878c-0d5aa3f7ed7a","Josue",
                 "Diaz","Curo","12345678","420040004321");
-        Acount acount = new Acount("808080008321","4321",10000);
-        mRootRef.child("acounts").child(acount.getNumber()).setValue(acount);
-        User google = new User("95568c45-7777-4309-878c-0d5aa3f7ed7a","Google",
-                "Perez","Real","87654321",acount.getNumber());
+
+        Acount acount = new Acount("Bonadet","1234",10000);
+
+        mRootRef.child("acounts").child("420040004321").setValue(acount);
+
         mRootRef.child("users").child(google.getId()).setValue(google);
         mRootRef.child("users").child(user.getId()).setValue(user);
         Debt luz = new Debt(UUID.randomUUID().toString(),"PAGO DE LUZ",300,
@@ -68,10 +70,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 "808080008321","420040004321","1");
         Debt internet = new Debt(UUID.randomUUID().toString(),"PAGO DE INTERNET",300,
                 "808080008321","420040004321","1");
-        mRootRef.child("debts").child(luz.getId()).setValue(luz);
         mRootRef.child("debts").child(agua.getId()).setValue(agua);
         mRootRef.child("debts").child(internet.getId()).setValue(internet);
-    }*/
+        */
+    }
 
     private void login() {
 

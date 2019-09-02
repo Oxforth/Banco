@@ -25,7 +25,8 @@ public class CuentaFragment extends Fragment {
 
     DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
     private User user;
-    public Acount acount;
+    private Acount acount;
+    private String numero;
 
     private TextView cuenta, nombres, dni, monto;
 
@@ -45,15 +46,40 @@ public class CuentaFragment extends Fragment {
         verCuenta();
     }
 
-    public void User(User user, Acount acount) {
-        this.user = user;
-        this.acount = acount;
+    public void User(String acount) {
+        this.numero = acount;
     }
 
     private void verCuenta() {
-        cuenta.setText("Cuenta: " + acount.getNumber());
-        nombres.setText("Nombres: " + user.getNombre() + " " + user.getAppaterno() + " " + user.getApmaterno());
-        dni.setText("Dni: " + user.getDni());
-        monto.setText("Monto: " + String.valueOf(acount.getAmount()));
+        mRootRef.child("users").orderByChild("acountnumber").equalTo(numero).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot child : dataSnapshot.getChildren()){
+                    user = child.getValue(User.class);
+                }
+                nombres.setText("Nombres: " + user.getNombre() + " " + user.getAppaterno() + " " + user.getApmaterno());
+                dni.setText("Dni: " + user.getDni());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        mRootRef.child("acounts").orderByChild("number").equalTo(numero).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot child : dataSnapshot.getChildren()){
+                    acount = child.getValue(Acount.class);
+                }
+                cuenta.setText("Cuenta: " + acount.getNumber());
+                monto.setText("Monto: " + String.valueOf(acount.getAmount()));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

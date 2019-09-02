@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity
         ingresarFragment.User(user,acount);
         transferirFragment.User(user,acount);
         deudasFragment.User(user,acount);
-        cuentaFragment.User(user,acount);
+        cuentaFragment.User(acount.getNumber());
         historialFragment.User(user,acount);
     }
 }

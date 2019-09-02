@@ -84,11 +84,32 @@ public class DeudasFragment extends Fragment {
         deuda = (TextView) getActivity().findViewById(R.id.tvdeuda);
         pago = (TextView) getActivity().findViewById(R.id.tvPago);
 
+        maxid = 0;
+
+        mRootRef.child("actions").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    maxid = (int) dataSnapshot.getChildrenCount();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         pagar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pagar();
-                limpiar();
+
+                if(deuda.getText().toString().isEmpty()||monto.getText().toString().isEmpty()){
+                    Toast.makeText(getActivity(),"INGRESE MONTO O SELECCIONE DEUDA",Toast.LENGTH_LONG).show();
+                } else {
+                    pagar();
+                    limpiar();
+                }
             }
         });
         ldeudas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -135,58 +156,41 @@ public class DeudasFragment extends Fragment {
     private void pagar() {
         final Double mont = Double.parseDouble(monto.getText().toString());
 
-        mRootRef.child("users").orderByChild("id").equalTo(user.getId());
+        action = new Action(maxid + 1, "PAG-" + user.getNombre() + " " +
+                debt.getName() + dtf.format(now), mont, "PAGO", user.getAcountnumber(), debt.getTransmitter());
 
-        maxid = 0;
+        //SE ACTUALIZA CUENTA DEL EMISOR
+        acount.setAmount(acount.getAmount() - action.getAmount());
 
-        mRootRef.child("actions").addValueEventListener(new ValueEventListener() {
+        mRootRef.child("acounts").orderByChild("number").equalTo(debt.getTransmitter()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    maxid = (int) dataSnapshot.getChildrenCount();
-                    action = new Action(maxid + 1, "PAG-" + user.getNombre() + " " +
-                            debt.getName() + dtf.format(now), mont, "PAGO", user.getAcountnumber(), debt.getTransmitter());
-
-                    //SE ACTUALIZA CUENTA DEL EMISOR
-                    acount.setAmount(acount.getAmount() - action.getAmount());
-
-                    mRootRef.child("acounts").orderByChild("number").equalTo(debt.getTransmitter()).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            for (DataSnapshot child : dataSnapshot.getChildren()) {
-                                acount2 = child.getValue(Acount.class);
-                            }
-                            //SE ACTUALIZA CUENTA DEL RECEPTOR
-                            acount2.setAmount(acount2.getAmount() + mont);
-
-                            //SE PREPARA DEUDA
-                            debt.setAmount(debt.getAmount() - mont);
-                            if (debt.getAmount() == 0) {
-                                debt.setEstate("0");
-                                debt.setValue("0_" + debt.getReceiver());
-                            }
-
-                            //SE INGRESA ACCION A LA DB
-                            mRootRef.child("actions").child(String.valueOf(maxid + 1)).setValue(action);
-
-                            //SE ACTUALIZA CUENTA 1 EN LA DB
-                            mRootRef.child("acounts").child(acount.getNumber()).setValue(acount);
-
-                            //SE ACTUALIZA CUENTA 2 EN LA DB
-                            mRootRef.child("acounts").child(acount2.getNumber()).setValue(acount2);
-
-                            //SE ACTUALIZAN LAS DEUDAS
-                            mRootRef.child("debts").child(debt.getId()).setValue(debt);
-
-                            Toast.makeText(getActivity(), "PAGO EXITOSO", Toast.LENGTH_LONG).show();
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    acount2 = child.getValue(Acount.class);
                 }
+                //SE ACTUALIZA CUENTA DEL RECEPTOR
+                acount2.setAmount(acount2.getAmount() + mont);
+
+                //SE PREPARA DEUDA
+                debt.setAmount(debt.getAmount() - mont);
+                if (debt.getAmount() == 0) {
+                    debt.setEstate("0");
+                    debt.setValue("0_" + debt.getReceiver());
+                }
+
+                //SE INGRESA ACCION A LA DB
+                mRootRef.child("actions").child(String.valueOf(maxid + 1)).setValue(action);
+
+                //SE ACTUALIZA CUENTA 1 EN LA DB
+                mRootRef.child("acounts").child(acount.getNumber()).setValue(acount);
+
+                //SE ACTUALIZA CUENTA 2 EN LA DB
+                mRootRef.child("acounts").child(acount2.getNumber()).setValue(acount2);
+
+                //SE ACTUALIZAN LAS DEUDAS
+                mRootRef.child("debts").child(debt.getId()).setValue(debt);
+
+                Toast.makeText(getActivity(), "PAGO EXITOSO", Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -194,6 +198,7 @@ public class DeudasFragment extends Fragment {
 
             }
         });
+
     }
 
 }
